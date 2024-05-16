@@ -1,4 +1,4 @@
-package gildongmu.trip.domain.Image.Repository;
+package gildongmu.trip.domain.Image.repository;
 
 
 import gildongmu.trip.domain.Image.entity.Image;

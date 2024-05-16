@@ -1,4 +1,4 @@
-package gildongmu.trip.dto;
+package gildongmu.trip.dto.transfer;
 
 import gildongmu.trip.dto.response.UserInfoResponse;
 import lombok.Builder;

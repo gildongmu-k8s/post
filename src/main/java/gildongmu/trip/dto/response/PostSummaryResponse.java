@@ -2,7 +2,7 @@ package gildongmu.trip.dto.response;
 
 
 import gildongmu.trip.domain.post.entity.Post;
-import gildongmu.trip.dto.UserInfo;
+import gildongmu.trip.dto.transfer.UserInfo;
 import lombok.Builder;
 
 import java.util.Objects;
