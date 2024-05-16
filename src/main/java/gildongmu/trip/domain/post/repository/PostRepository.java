@@ -23,8 +23,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 
     Slice<Post> findByUserIdOrderByStatusDesc(Long userId, Pageable pageable);
 
-    @Query("select p from Post p left join Participant u on p.id = u.post.id where u.user.id = ?1 and u.status != 'DELETED' and u.isLeader = false order by p.status desc")
-    Slice<Post> findByParticipantUserOrderByStatusDesc(Long userId, Pageable pageable);
+//    @Query("select p from Post p left join Participant u on p.id = u.post.id where u.user.id = ?1 and u.status != 'DELETED' and u.isLeader = false order by p.status desc")
+//    Slice<Post> findByParticipantUserOrderByStatusDesc(Long userId, Pageable pageable);
 
     Optional<Post> findByIdAndStatus(Long postId, Status status);
 

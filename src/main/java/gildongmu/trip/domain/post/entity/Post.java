@@ -4,9 +4,10 @@ package gildongmu.trip.domain.post.entity;
 import gildongmu.trip.domain.BaseTimeEntity;
 import gildongmu.trip.domain.Image.entity.Image;
 import gildongmu.trip.domain.bookmark.entity.Bookmark;
+import gildongmu.trip.domain.comment.entity.Comment;
 import gildongmu.trip.domain.post.constant.MemberGender;
 import gildongmu.trip.domain.post.constant.Status;
-import gildongmu.trip.dto.UserInfo;
+import gildongmu.trip.dto.transfer.UserInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -81,15 +82,12 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Participant> postParticipants;
-
 
     @Builder(toBuilder = true)
     public Post(Long userId, String destination, String title, String content,
                 LocalDate startDate, LocalDate endDate, String thumbnail, List<Image> images,
                 MemberGender memberGender, Short participants, Status status,
-                Set<Bookmark> bookmarks, Long viewCount, List<Comment> comments, List<Participant> postParticipants) {
+                Set<Bookmark> bookmarks, Long viewCount, List<Comment> comments) {
         this.userId = userId;
         this.destination = destination;
         this.title = title;
@@ -104,7 +102,6 @@ public class Post extends BaseTimeEntity {
         this.bookmarks = bookmarks;
         this.viewCount = viewCount;
         this.comments = comments;
-        this.postParticipants = postParticipants;
     }
 
     public void updateDestination(String destination) {

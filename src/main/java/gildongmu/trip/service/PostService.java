@@ -1,7 +1,7 @@
 package gildongmu.trip.service;
 
 
-import gildongmu.trip.application.UserApplication;
+import gildongmu.trip.application.UserAdapter;
 import gildongmu.trip.client.S3Client;
 import gildongmu.trip.domain.Image.entity.Image;
 import gildongmu.trip.domain.bookmark.repository.BookmarkRepository;
@@ -12,7 +12,7 @@ import gildongmu.trip.domain.post.repository.PostRepository;
 import gildongmu.trip.domain.tag.entity.Tag;
 import gildongmu.trip.dto.PostItem;
 import gildongmu.trip.dto.TripDate;
-import gildongmu.trip.dto.UserInfo;
+import gildongmu.trip.dto.transfer.UserInfo;
 import gildongmu.trip.dto.request.PostCreateRequest;
 import gildongmu.trip.dto.request.PostUpdateRequest;
 import gildongmu.trip.dto.request.RetrievingType;
@@ -30,10 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.amazonaws.services.kms.model.ConnectionErrorCodeType.USER_NOT_FOUND;
 import static gildongmu.trip.exception.ErrorCode.POST_NOT_FOUND;
 
 
@@ -47,12 +45,12 @@ public class PostService {
     private final TagService tagService;
     private final ImageService imageService;
     private final S3Client s3Client;
-    private final UserApplication userApplication;
+    private final UserAdapter userAdapter;
 
     public PostListResponse findPosts(String keyword, String postFilter, String postSort, Pageable pageable, String token) {
         Page<Post> postPage = postRepository.findFilteredAndSortedPosts(keyword, postFilter, postSort, pageable);
 
-        UserInfo user = userApplication.getUserInfoFromToken(token);
+        UserInfo user = userAdapter.getUserInfoFromToken(token);
 
         List<PostItem> postListItems = postPage.getContent().stream()
                 .map(post -> mapToPostListItem(post, user))
@@ -82,7 +80,7 @@ public class PostService {
 
         long countOfBookmarks =
                 post.getBookmarks() != null ? post.getBookmarks().size() : 0;
-        UserInfo writer = userApplication.getUserInfoFromId(post.getUserId());
+        UserInfo writer = userAdapter.getUserInfoFromId(post.getUserId());
 
         return new PostItem(
                 post.getId(),
@@ -116,7 +114,7 @@ public class PostService {
     }
 
     public void createPost(PostCreateRequest postRequest, List<MultipartFile> images, String token) {
-        UserInfo user = userApplication.getUserInfoFromToken(token);
+        UserInfo user = userAdapter.getUserInfoFromToken(token);
         Post post = Post.builder()
                 .userId(user.id())
                 .title(postRequest.title())
@@ -149,7 +147,7 @@ public class PostService {
 
     public PostResponse updatePost(Long postId, List<MultipartFile> images, PostUpdateRequest postUpdateRequest) {
         Post post = postRepository.findById(postId)
-            .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         post.updateTitle(postUpdateRequest.title());
         post.updateContent(postUpdateRequest.content());
@@ -197,16 +195,17 @@ public class PostService {
     }
 
     public Slice<PostItem> retrieveMyPosts(String token, String type, Pageable pageable) {
-        UserInfo user = userApplication.getUserInfoFromToken(token);
+        UserInfo user = userAdapter.getUserInfoFromToken(token);
         if (RetrievingType.LEADER.name().equals(type))
             return postRepository.findByUserIdOrderByStatusDesc(user.id(), pageable)
                     .map(post -> mapToPostListItem(post, user));
-        return postRepository.findByParticipantUserOrderByStatusDesc(user.id(), pageable)
-                .map(post -> mapToPostListItem(post, user));
+        return null;
+//        return postRepository.findByParticipantUserOrderByStatusDesc(user.id(), pageable)
+//                .map(post -> mapToPostListItem(post, user));
     }
 
     public PostSummaryResponse retrievePostSummary(String token, Long postId) {
-        UserInfo user = userApplication.getUserInfoFromToken(token);
+        UserInfo user = userAdapter.getUserInfoFromToken(token);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 //        int numberOfAccepted = roomRepository.findByPost(post)

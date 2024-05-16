@@ -2,7 +2,7 @@ package gildongmu.trip.service;
 
 
 import gildongmu.trip.client.S3Client;
-import gildongmu.trip.domain.Image.Repository.ImageRepository;
+import gildongmu.trip.domain.Image.repository.ImageRepository;
 import gildongmu.trip.domain.Image.entity.Image;
 import gildongmu.trip.domain.post.entity.Post;
 import jakarta.transaction.Transactional;
